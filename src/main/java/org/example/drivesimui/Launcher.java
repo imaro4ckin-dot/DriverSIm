@@ -1,4 +1,4 @@
-package org.example.drivesimui; // Make sure this matches your actual package name!
+package org.example.drivesimui; // Make sure this matches your package name!
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,11 +17,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Launcher extends Application {
 
-    // Backend controller and UI data list
     private GarageManger manager = new GarageManger();
     private ObservableList<LapTime> uiLapData = FXCollections.observableArrayList();
+
+    // Dictionaries to keep track of our data series and lap counts
+    private Map<String, XYChart.Series<String, Number>> trackSeriesMap = new HashMap<>();
+    private Map<String, Integer> trackLapCounts = new HashMap<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -31,21 +37,11 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Sim Racing Garage Manager - Pro Edition");
 
-        // --- 1. THE USP: LIVE TELEMETRY CHART ---
-        CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Lap Sequence");
-
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("Lap Time (Seconds)");
-        yAxis.setAutoRanging(true);
-
-        LineChart<String, Number> telemetryChart = new LineChart<>(xAxis, yAxis);
-        telemetryChart.setTitle("Session Performance History");
-        telemetryChart.setPrefWidth(450);
-
-        XYChart.Series<String, Number> lapSeries = new XYChart.Series<>();
-        lapSeries.setName("Lap Time Trend");
-        telemetryChart.getData().add(lapSeries);
+        // --- 1. THE USP: TABBED TELEMETRY CHARTS ---
+        // Instead of a single LineChart, we create a TabPane to hold multiple charts
+        TabPane chartTabPane = new TabPane();
+        chartTabPane.setPrefWidth(450);
+        chartTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); // Prevent users from accidentally closing a chart
 
         // --- 2. THE DATA TABLE ---
         TableView<LapTime> table = new TableView<>();
@@ -79,7 +75,6 @@ public class Launcher extends Application {
         TextField timeInput = new TextField();
         timeInput.setPromptText("Time in ms (e.g., 84500)");
 
-        // Dynamic Dropdown Setup
         ObservableList<String> carOptions = FXCollections.observableArrayList(
                 "Porsche 911 GT3 R",
                 "Ferrari F1-75"
@@ -87,7 +82,6 @@ public class Launcher extends Application {
         ComboBox<String> carTypeDropdown = new ComboBox<>(carOptions);
         carTypeDropdown.setValue("Porsche 911 GT3 R");
 
-        // Mini-form to register a new car
         TextField newCarInput = new TextField();
         newCarInput.setPromptText("Add new car...");
 
@@ -101,37 +95,72 @@ public class Launcher extends Application {
             }
         });
 
-        // Main Submit Button
         Button addLapBtn = new Button("Log Lap & Plot Data");
         addLapBtn.setStyle("-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-weight: bold;");
 
         addLapBtn.setOnAction(event -> {
             try {
-                String track = trackInput.getText();
+                String track = trackInput.getText().trim();
                 long timeMs = Long.parseLong(timeInput.getText());
                 String selectedCar = carTypeDropdown.getValue();
 
                 Vehicle car;
-                // Object creation logic with fallback for custom cars
                 if (selectedCar.equals("Porsche 911 GT3 R")) {
                     car = new GT3Car("Porsche", "911 GT3 R", 2023);
                 } else if (selectedCar.equals("Ferrari F1-75")) {
                     car = new FormulaCar("Ferrari", "F1-75", 2022);
                 } else {
-                    // Fallback: Generates a custom GT3 car using the name the user added
                     car = new GT3Car("Custom", selectedCar, 2024);
                 }
 
                 LapTime newLap = new LapTime(track, timeMs, car);
 
-                // Add to backend manager and UI table
                 manager.addLap(newLap);
                 uiLapData.add(newLap);
 
-                // Update the chart
+                // --- TABBED CHART LOGIC ---
                 double timeInSeconds = timeMs / 1000.0;
-                int lapNumber = uiLapData.size();
-                lapSeries.getData().add(new XYChart.Data<>("L" + lapNumber, timeInSeconds));
+
+                // 1. Check if we already have a graph series for this track
+                XYChart.Series<String, Number> trackSeries = trackSeriesMap.get(track);
+
+                // 2. If we don't, we need to build a brand new Tab and Chart for it!
+                if (trackSeries == null) {
+                    // Create new axes for this specific chart
+                    CategoryAxis xAxis = new CategoryAxis();
+                    xAxis.setLabel("Lap Sequence");
+                    NumberAxis yAxis = new NumberAxis();
+                    yAxis.setLabel("Lap Time (Seconds)");
+                    yAxis.setAutoRanging(true);
+
+                    // Create the completely separate chart
+                    LineChart<String, Number> newTrackChart = new LineChart<>(xAxis, yAxis);
+                    newTrackChart.setTitle(track + " Performance History");
+
+                    // Create the data line
+                    trackSeries = new XYChart.Series<>();
+                    trackSeries.setName(track + " Trend");
+                    newTrackChart.getData().add(trackSeries);
+
+                    // Create a new Tab, put the chart inside it, and add it to our TabPane
+                    Tab newTab = new Tab(track);
+                    newTab.setContent(newTrackChart);
+                    chartTabPane.getTabs().add(newTab);
+
+                    // Save the data line to our dictionary so we can find it next time
+                    trackSeriesMap.put(track, trackSeries);
+                    trackLapCounts.put(track, 0);
+
+                    // Automatically switch the user's view to the newly created tab
+                    chartTabPane.getSelectionModel().select(newTab);
+                }
+
+                // 3. Figure out what lap number this is for THIS specific track
+                int currentLapCount = trackLapCounts.get(track) + 1;
+                trackLapCounts.put(track, currentLapCount);
+
+                // 4. Add the data point to the correct tab's graph line
+                trackSeries.getData().add(new XYChart.Data<>("Lap " + currentLapCount, timeInSeconds));
 
                 // Clear input fields for the next entry
                 trackInput.clear();
@@ -144,7 +173,8 @@ public class Launcher extends Application {
 
         // --- 4. LAYOUT ASSEMBLY ---
         HBox topDataSection = new HBox(20);
-        topDataSection.getChildren().addAll(table, telemetryChart);
+        // We now place the chartTabPane next to the table instead of a single chart
+        topDataSection.getChildren().addAll(table, chartTabPane);
 
         HBox inputFields = new HBox(10);
         inputFields.getChildren().addAll(trackInput, timeInput, carTypeDropdown, newCarInput, addNewCarBtn, addLapBtn);
