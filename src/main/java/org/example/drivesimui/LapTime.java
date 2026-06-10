@@ -8,6 +8,7 @@ public class LapTime implements DataExport {
     private long TimeInMilSec;
     private LocalDate dateRecorded;
     private Vehicle carUsed;
+    private long deltaMs = 0;
 
 
     public LapTime(String TrackName, long TimeInMilSec, Vehicle carUsed){
@@ -35,15 +36,43 @@ public class LapTime implements DataExport {
 
     @Override
     public String toJSON() {
+        Vehicle car = getCarUsed();
+
         return "{\n" +
                "  \"track\": \"" + TrackName + "\",\n" +
-               "  \"timeMs\": " + TimeInMilSec + ",\n" +
-               "  \"date\": \"" + dateRecorded.toString() + "\",\n" +
-               "  \"car\": \"" + carUsed.getMake() + "\"\n" +
+               "  \"lapTimeMs\": " +  + TimeInMilSec +  ",\n" +
+               "  \"car\": {\n" +
+               "    \"type\": \"" + car.getCarType() + "\",\n" +
+               "    \"make\": \"" + car.getMake() + "\",\n" +
+               "    \"model\": \"" + car.getModel() + "\",\n" +
+               "    \"setup\": {\n" +
+               "      " + car.getSetupJSON() + "\n" + //
+               "    }\n" +
+               "  }\n" +
                "}";
     }
+
+    public String getFormattedDelta(){
+        if (deltaMs == 0 ) return "-";
+        double seconds = deltaMs / 1000.0;
+
+       if (deltaMs > 0) {
+            return String.format("+%.3f", seconds); // Slower lap gets a plus sign
+        }
+
+        return String.format("%.3f", seconds); // Faster lap automatically has a minus sign from the math
+    }
+
 
 public String getTrackName() { return TrackName; }
     public long getTimeInMilliseconds() { return TimeInMilSec; }
     public Vehicle getCarUsed() { return carUsed; }
+
+    public void setDeltaMs(long deltaMs){
+        this.deltaMs =deltaMs;
+    }
+
+    public long getDeltaMs(){
+        return deltaMs;
+    }
 }
