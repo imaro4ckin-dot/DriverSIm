@@ -1,0 +1,1068 @@
+/* ============================================================
+   DriverSim — Racing Cockpit Dark Theme
+   Palette:
+     bg-deep     #0D1117   (root background)
+     bg-surface  #161B22   (cards, panels)
+     bg-elevated #21262D   (tabs, inputs, toolbar)
+     accent-red  #E8002D   (primary action / selected)
+     accent-blue #58A6FF   (chart line / info)
+     success     #3FB950   (faster delta)
+     danger      #F85149   (slower delta)
+     text-prim   #E6EDF3
+     text-muted  #8B949E
+     border      rgba(240,246,252,0.10)
+   ============================================================ */
+
+/* ── ROOT ───────────────────────────────────────────────── */
+.root {
+    -fx-background-color: #0D1117;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+}
+
+/* ── SCROLL PANE ────────────────────────────────────────── */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane .corner {
+    -fx-background-color: #161B22;
+}
+.scroll-bar {
+    -fx-background-color: #161B22;
+}
+.scroll-bar .thumb {
+    -fx-background-color: #30363D;
+    -fx-background-radius: 4;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: #484F58;
+}
+.scroll-bar .track {
+    -fx-background-color: #161B22;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: #8B949E;
+}
+
+/* ── MAIN CONTAINER ─────────────────────────────────────── */
+.main-container {
+    -fx-background-color: #0D1117;
+    -fx-padding: 0;
+}
+
+/* ── KPI HEADER BAR ─────────────────────────────────────── */
+.kpi-bar {
+    -fx-background-color: #161B22;
+    -fx-border-color: transparent transparent #E8002D transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 10 18 10 18;
+    -fx-spacing: 0;
+}
+.kpi-card {
+    -fx-background-color: #21262D;
+    -fx-background-radius: 6;
+    -fx-padding: 8 18 8 18;
+    -fx-alignment: CENTER;
+    -fx-min-width: 120;
+}
+.kpi-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-weight: bold;
+}
+.kpi-value {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 20px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-weight: bold;
+}
+.kpi-value-red {
+    -fx-text-fill: #E8002D;
+    -fx-font-size: 20px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-weight: bold;
+}
+.kpi-separator {
+    -fx-stroke: #30363D;
+    -fx-stroke-width: 1;
+}
+.app-title {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.app-title-accent {
+    -fx-text-fill: #E8002D;
+}
+
+/* ── TAB PANE ───────────────────────────────────────────── */
+.tab-pane {
+    -fx-background-color: #161B22;
+    -fx-tab-min-height: 32px;
+}
+.tab-pane .tab-header-area {
+    -fx-background-color: #0D1117;
+    -fx-padding: 0 0 0 8;
+}
+.tab-pane .tab-header-background {
+    -fx-background-color: #0D1117;
+}
+.tab-pane .tab {
+    -fx-background-color: #21262D;
+    -fx-background-radius: 4 4 0 0;
+    -fx-padding: 6 16 6 16;
+    -fx-cursor: hand;
+}
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 12px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.tab-pane .tab:hover .tab-label {
+    -fx-text-fill: #E6EDF3;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: #161B22;
+    -fx-border-color: transparent transparent #E8002D transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #E8002D;
+    -fx-font-weight: bold;
+}
+.tab-pane .tab-content-area {
+    -fx-background-color: #161B22;
+}
+/* nested sub-tab pane (car type) */
+.tab-pane .tab-pane .tab {
+    -fx-background-color: #0D1117;
+}
+.tab-pane .tab-pane .tab:selected {
+    -fx-background-color: #21262D;
+    -fx-border-color: transparent transparent #58A6FF transparent;
+    -fx-border-width: 0 0 2 0;
+}
+.tab-pane .tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #58A6FF;
+}
+
+/* ── TABLE VIEW ─────────────────────────────────────────── */
+.table-view {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-table-cell-border-color: transparent;
+}
+.table-view .column-header-background {
+    -fx-background-color: #0D1117;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #30363D transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 6 8 6 8;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+}
+.table-view .filler {
+    -fx-background-color: #0D1117;
+}
+.table-row-cell {
+    -fx-background-color: #161B22;
+    -fx-border-color: transparent transparent #21262D transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 30px;
+}
+.table-row-cell:odd {
+    -fx-background-color: #1C2128;
+}
+.table-row-cell:selected {
+    -fx-background-color: #2D3748;
+}
+.table-row-cell:hover {
+    -fx-background-color: #21262D;
+    -fx-cursor: hand;
+}
+.table-cell {
+    -fx-text-fill: #E6EDF3;
+    -fx-padding: 4 8 4 8;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* ── DELTA CELL STYLES ──────────────────────────────────── */
+.delta-faster {
+    -fx-text-fill: #3FB950;
+    -fx-font-weight: bold;
+}
+.delta-slower {
+    -fx-text-fill: #F85149;
+    -fx-font-weight: bold;
+}
+.delta-neutral {
+    -fx-text-fill: #8B949E;
+}
+
+/* ── BUTTONS ────────────────────────────────────────────── */
+.button {
+    -fx-background-color: #21262D;
+    -fx-text-fill: #E6EDF3;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+}
+.button:hover {
+    -fx-background-color: #30363D;
+    -fx-border-color: #8B949E;
+}
+.button:pressed {
+    -fx-background-color: #161B22;
+}
+.button:disabled {
+    -fx-opacity: 0.4;
+}
+
+/* Primary — Log Lap */
+.btn-primary {
+    -fx-background-color: #E8002D;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20 8 20;
+}
+.btn-primary:hover {
+    -fx-background-color: #FF1A42;
+    -fx-border-color: transparent;
+}
+.btn-primary:pressed {
+    -fx-background-color: #C4001E;
+}
+
+/* Success — Export */
+.btn-success {
+    -fx-background-color: #238636;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+.btn-success:hover {
+    -fx-background-color: #2EA043;
+    -fx-border-color: transparent;
+}
+
+/* Warning — AI Analyze */
+.btn-warning {
+    -fx-background-color: #9E6A03;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+.btn-warning:hover {
+    -fx-background-color: #BB8009;
+    -fx-border-color: transparent;
+}
+
+/* Add car "+" button */
+.btn-add {
+    -fx-background-color: #21262D;
+    -fx-text-fill: #3FB950;
+    -fx-border-color: #3FB950;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+    -fx-padding: 2 8 2 8;
+}
+.btn-add:hover {
+    -fx-background-color: #238636;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Advanced toggle */
+.btn-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: #58A6FF;
+    -fx-border-color: #58A6FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 11px;
+    -fx-padding: 3 10 3 10;
+}
+.btn-toggle:hover {
+    -fx-background-color: rgba(88,166,255,0.12);
+}
+
+/* ── TEXT FIELD / INPUT ─────────────────────────────────── */
+.text-field {
+    -fx-background-color: #21262D;
+    -fx-text-fill: #E6EDF3;
+    -fx-prompt-text-fill: #484F58;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.text-field:focused {
+    -fx-border-color: #58A6FF;
+    -fx-background-color: #1C2128;
+}
+
+/* ── COMBO BOX ──────────────────────────────────────────── */
+.combo-box {
+    -fx-background-color: #21262D;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 2 0 2 0;
+}
+.combo-box .list-cell {
+    -fx-text-fill: #E6EDF3;
+    -fx-background-color: transparent;
+    -fx-padding: 4 10 4 10;
+}
+.combo-box:focused {
+    -fx-border-color: #58A6FF;
+}
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #8B949E;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: #21262D;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 12, 0, 0, 4);
+}
+.combo-box-popup .list-cell {
+    -fx-text-fill: #E6EDF3;
+    -fx-background-color: transparent;
+    -fx-padding: 6 12 6 12;
+}
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #30363D;
+}
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #2D3748;
+    -fx-text-fill: #58A6FF;
+}
+
+/* ── SLIDER ─────────────────────────────────────────────── */
+.slider {
+    -fx-padding: 2 0 2 0;
+}
+.slider .track {
+    -fx-background-color: #30363D;
+    -fx-background-radius: 3;
+    -fx-pref-height: 4;
+}
+.slider .thumb {
+    -fx-background-color: #E8002D;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 14;
+    -fx-pref-height: 14;
+    -fx-effect: dropshadow(gaussian, rgba(232,0,45,0.4), 6, 0, 0, 0);
+}
+.slider .thumb:hover {
+    -fx-background-color: #FF1A42;
+    -fx-pref-width: 16;
+    -fx-pref-height: 16;
+}
+.slider .tick-mark {
+    -fx-stroke: #484F58;
+}
+.slider .tick-label {
+    -fx-fill: #8B949E;
+    -fx-font-size: 9px;
+}
+
+/* ── CHECK BOX ──────────────────────────────────────────── */
+.check-box {
+    -fx-text-fill: #E6EDF3;
+}
+.check-box .box {
+    -fx-background-color: #21262D;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+.check-box:selected .box {
+    -fx-background-color: #E8002D;
+    -fx-border-color: #E8002D;
+}
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* ── TEXT AREA (AI Output) ──────────────────────────────── */
+.text-area {
+    -fx-background-color: #0D1117;
+    -fx-text-fill: #E6EDF3;
+    -fx-prompt-text-fill: #484F58;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+}
+.text-area .content {
+    -fx-background-color: #0D1117;
+}
+.text-area:focused {
+    -fx-border-color: #9E6A03;
+}
+
+/* ── LABELS ─────────────────────────────────────────────── */
+.label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+}
+.section-title {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.section-badge {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-background-color: #21262D;
+    -fx-background-radius: 4;
+    -fx-padding: 2 8 2 8;
+}
+
+/* ── FORM SECTION ───────────────────────────────────────── */
+.form-panel {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+    -fx-spacing: 10;
+}
+.setup-panel {
+    -fx-background-color: #1C2128;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 14 10 14;
+}
+.advanced-panel {
+    -fx-background-color: #0D1117;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 14 10 14;
+    -fx-border-style: dashed;
+}
+
+/* ── AI SECTION ─────────────────────────────────────────── */
+.ai-panel {
+    -fx-background-color: #161B22;
+    -fx-border-color: #9E6A03;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+}
+.ai-title {
+    -fx-text-fill: #D29922;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* ── CHART ──────────────────────────────────────────────── */
+.chart {
+    -fx-background-color: #161B22;
+    -fx-padding: 0;
+}
+.chart-plot-background {
+    -fx-background-color: #0D1117;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+}
+.chart-title {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.axis-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+}
+.axis {
+    -fx-tick-label-fill: #8B949E;
+    -fx-tick-length: 4;
+    -fx-minor-tick-length: 2;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: #21262D;
+    -fx-stroke-width: 1;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #21262D;
+    -fx-stroke-width: 1;
+}
+.chart-vertical-zero-line {
+    -fx-stroke: #30363D;
+}
+.chart-horizontal-zero-line {
+    -fx-stroke: #30363D;
+}
+.default-color0.chart-series-line {
+    -fx-stroke: #58A6FF;
+    -fx-stroke-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(88,166,255,0.5), 6, 0, 0, 0);
+}
+.default-color0.chart-line-symbol {
+    -fx-background-color: #58A6FF, #0D1117;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0, 2px;
+    -fx-padding: 5px;
+}
+.chart-legend {
+    -fx-background-color: transparent;
+}
+.chart-legend-item {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+}
+.chart-legend-item-symbol {
+    -fx-background-color: #58A6FF;
+    -fx-background-radius: 3;
+}
+
+/* ── SEPARATOR ──────────────────────────────────────────── */
+.separator .line {
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+}
+
+/* ── TOOLBAR / EXPORT BAR ───────────────────────────────── */
+.export-bar {
+    -fx-background-color: #0D1117;
+    -fx-padding: 6 8 6 0;
+    -fx-spacing: 6;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* ── DIALOG / ALERT ─────────────────────────────────────── */
+.dialog-pane {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: #0D1117;
+}
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 14px;
+}
+.dialog-pane .content.label {
+    -fx-text-fill: #8B949E;
+}
+.dialog-pane .button-bar .button {
+    -fx-background-color: #21262D;
+    -fx-text-fill: #E6EDF3;
+    -fx-border-color: #30363D;
+}
+
+/* ── CONTEXT MENU ───────────────────────────────────────── */
+.context-menu {
+    -fx-background-color: #21262D;
+    -fx-border-color: #30363D;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 12, 0, 0, 4);
+}
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 6 12 6 12;
+}
+.menu-item .label {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 12px;
+}
+.menu-item:hover {
+    -fx-background-color: #30363D;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIVE DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
+
+/* Dashboard root scroll */
+.dashboard-root {
+    -fx-background-color: #0D1117;
+    -fx-padding: 14 16 14 16;
+    -fx-spacing: 14;
+}
+
+/* ── BIG STAT CARD ──────────────────────────────────────── */
+.stat-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+    -fx-min-width: 160;
+    -fx-pref-width: 180;
+}
+.stat-card-header {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stat-card-value {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stat-card-value-red {
+    -fx-text-fill: #E8002D;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stat-card-value-green {
+    -fx-text-fill: #3FB950;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stat-card-value-gold {
+    -fx-text-fill: #D29922;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stat-card-sub {
+    -fx-text-fill: #484F58;
+    -fx-font-size: 10px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ── TRACK STATE BADGE ──────────────────────────────────── */
+.track-state-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+    -fx-min-width: 140;
+    -fx-alignment: CENTER;
+}
+.track-state-green {
+    -fx-background-color: #1A4731;
+    -fx-text-fill: #3FB950;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 20 8 20;
+}
+.track-state-yellow {
+    -fx-background-color: #3A2D00;
+    -fx-text-fill: #D29922;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 20 8 20;
+}
+.track-state-red {
+    -fx-background-color: #3D0A0A;
+    -fx-text-fill: #F85149;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 20 8 20;
+}
+
+/* ── STOPWATCH DISPLAY ──────────────────────────────────── */
+.stopwatch-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #E8002D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 22 14 22;
+    -fx-alignment: CENTER;
+}
+.stopwatch-display {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stopwatch-display-running {
+    -fx-text-fill: #E8002D;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.btn-timer-start {
+    -fx-background-color: #238636;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+    -fx-min-width: 80;
+}
+.btn-timer-start:hover { -fx-background-color: #2EA043; }
+.btn-timer-stop {
+    -fx-background-color: #DA3633;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+    -fx-min-width: 80;
+}
+.btn-timer-stop:hover { -fx-background-color: #F85149; }
+.btn-timer-reset {
+    -fx-background-color: #21262D;
+    -fx-text-fill: #8B949E;
+    -fx-border-color: #30363D;
+    -fx-font-size: 12px;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+}
+.btn-timer-reset:hover { -fx-background-color: #30363D; -fx-text-fill: #E6EDF3; }
+
+/* ── LIVE WALL CLOCK ────────────────────────────────────── */
+.clock-display {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 13px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ── EVENTS LOG ─────────────────────────────────────────── */
+.events-panel {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+}
+.events-header {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-background-color: #0D1117;
+    -fx-padding: 8 14 8 14;
+}
+.event-row {
+    -fx-padding: 6 14 6 14;
+    -fx-border-color: transparent transparent #21262D transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.event-time {
+    -fx-text-fill: #484F58;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-min-width: 70;
+}
+.event-text {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.event-text-highlight {
+    -fx-text-fill: #D29922;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.event-text-green {
+    -fx-text-fill: #3FB950;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ── DASHBOARD LAP TABLE ────────────────────────────────── */
+.dash-lap-table .table-row-cell.best-lap-row {
+    -fx-background-color: #1A3A1A;
+}
+.dash-lap-table .table-row-cell.best-lap-row .table-cell {
+    -fx-text-fill: #3FB950;
+}
+.dash-lap-table {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* ── SECTION PANEL ──────────────────────────────────────── */
+.dash-panel {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12 14 12 14;
+}
+.dash-panel-title {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.dash-stat-row-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 12px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.dash-stat-row-value {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LAP COMPARISON
+   ═══════════════════════════════════════════════════════════ */
+.comparison-root {
+    -fx-background-color: #0D1117;
+    -fx-padding: 16;
+    -fx-spacing: 14;
+}
+.comparison-header-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+}
+.comparison-lap-badge {
+    -fx-background-color: #21262D;
+    -fx-border-color: #58A6FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 18 10 18;
+    -fx-alignment: CENTER;
+}
+.comparison-lap-badge-b {
+    -fx-background-color: #21262D;
+    -fx-border-color: #E8002D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 18 10 18;
+    -fx-alignment: CENTER;
+}
+.comparison-lap-time {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.comparison-lap-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.diff-table .table-cell.diff-better {
+    -fx-background-color: rgba(63,185,80,0.15);
+    -fx-text-fill: #3FB950;
+    -fx-font-weight: bold;
+}
+.diff-table .table-cell.diff-worse {
+    -fx-background-color: rgba(248,81,73,0.15);
+    -fx-text-fill: #F85149;
+    -fx-font-weight: bold;
+}
+.diff-table .table-cell.diff-same {
+    -fx-text-fill: #8B949E;
+}
+.diff-table .table-cell.diff-param {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+}
+.diff-table {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+.diff-table .column-header .label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.comparison-hint {
+    -fx-text-fill: #484F58;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.verdict-card {
+    -fx-background-color: #1A3A1A;
+    -fx-border-color: #3FB950;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12 18 12 18;
+}
+.verdict-text {
+    -fx-text-fill: #3FB950;
+    -fx-font-size: 12px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-wrap-text: true;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FUEL STRATEGY
+   ═══════════════════════════════════════════════════════════ */
+.fuel-root {
+    -fx-background-color: #0D1117;
+    -fx-padding: 16;
+    -fx-spacing: 14;
+}
+.fuel-input-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 16 20 16 20;
+}
+.fuel-field-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-min-width: 180;
+}
+.fuel-result-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #9E6A03;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 14 18 14 18;
+    -fx-min-width: 160;
+}
+.fuel-result-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.fuel-result-value {
+    -fx-text-fill: #D29922;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.fuel-result-value-ok {
+    -fx-text-fill: #3FB950;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.fuel-result-value-warn {
+    -fx-text-fill: #F85149;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.stint-table {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+.stint-table .column-header .label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.fuel-bar-bg {
+    -fx-background-color: #21262D;
+    -fx-background-radius: 4;
+    -fx-pref-height: 10;
+}
+.fuel-bar-fill {
+    -fx-background-color: #3FB950;
+    -fx-background-radius: 4;
+    -fx-pref-height: 10;
+}
+.fuel-bar-fill-warn {
+    -fx-background-color: #D29922;
+    -fx-background-radius: 4;
+    -fx-pref-height: 10;
+}
+.fuel-bar-fill-crit {
+    -fx-background-color: #F85149;
+    -fx-background-radius: 4;
+    -fx-pref-height: 10;
+}
+.fuel-warning-label {
+    -fx-text-fill: #F85149;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.btn-calculate {
+    -fx-background-color: #9E6A03;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 9 24 9 24;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.btn-calculate:hover { -fx-background-color: #BB8009; }
