@@ -47,6 +47,12 @@ public class Launcher extends Application {
     private final LapComparisonController comparison = new LapComparisonController();
     private final FuelStrategyController  fuelStrat  = new FuelStrategyController();
 
+    // Sector summary labels per key (updated on every lap)
+    private final Map<String, Label> sectorS1Labels   = new HashMap<>();
+    private final Map<String, Label> sectorS2Labels   = new HashMap<>();
+    private final Map<String, Label> sectorS3Labels   = new HashMap<>();
+    private final Map<String, Label> sectorTheoLabels = new HashMap<>();
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -197,6 +203,46 @@ public class Launcher extends Application {
         });
 
         // ── 7. LOG LAP BUTTON ──────────────────────────────────────
+        // Sector time inputs
+        TextField s1Input = new TextField();
+        s1Input.setPromptText("S1  e.g. 0.28.100");
+        s1Input.setPrefWidth(140);
+
+        TextField s2Input = new TextField();
+        s2Input.setPromptText("S2  e.g. 0.31.200");
+        s2Input.setPrefWidth(140);
+
+        TextField s3Input = new TextField();
+        s3Input.setPromptText("S3  e.g. 0.25.000");
+        s3Input.setPrefWidth(140);
+
+        // Weather dropdown
+        ObservableList<String> weatherOptions = FXCollections.observableArrayList(
+                "DRY", "DAMP", "WET", "COLD", "HOT");
+        ComboBox<String> weatherDropdown = new ComboBox<>(weatherOptions);
+        weatherDropdown.setValue("DRY");
+        weatherDropdown.setPrefWidth(90);
+        weatherDropdown.setCellFactory(lv -> new ListCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) { setText(null); setGraphic(null); return; }
+                Label pill = new Label(item);
+                pill.getStyleClass().addAll("weather-pill", "weather-" + item);
+                setGraphic(pill);
+                setText(null);
+            }
+        });
+        weatherDropdown.setButtonCell(new ListCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) { setText(null); setGraphic(null); return; }
+                Label pill = new Label(item);
+                pill.getStyleClass().addAll("weather-pill", "weather-" + item);
+                setGraphic(pill);
+                setText(null);
+            }
+        });
+
         Button addLapBtn = new Button("▶  LOG LAP");
         addLapBtn.getStyleClass().add("btn-primary");
         addLapBtn.setOnAction(event -> {
@@ -211,19 +257,41 @@ public class Launcher extends Application {
                         fwSlider, rwSlider, ersModeDropdown,
                         drsCheckBox, diffEntrySlider, diffExitSlider, formulaFuelSlider);
 
-                processNewLap(new LapTime(track, timeMs, car), trackTabPane);
+                LapTime lap = new LapTime(track, timeMs, car);
+
+                // Parse sector times (optional — blank = not recorded)
+                if (!s1Input.getText().isBlank())
+                    try { lap.setS1Ms(parseTimeInput(s1Input.getText().trim())); } catch (IllegalArgumentException ignored) {}
+                if (!s2Input.getText().isBlank())
+                    try { lap.setS2Ms(parseTimeInput(s2Input.getText().trim())); } catch (IllegalArgumentException ignored) {}
+                if (!s3Input.getText().isBlank())
+                    try { lap.setS3Ms(parseTimeInput(s3Input.getText().trim())); } catch (IllegalArgumentException ignored) {}
+
+                lap.setWeather(LapTime.Weather.valueOf(weatherDropdown.getValue()));
+
+                processNewLap(lap, trackTabPane);
                 trackInput.clear();
                 timeInput.clear();
+                s1Input.clear();
+                s2Input.clear();
+                s3Input.clear();
             } catch (IllegalArgumentException e) {
                 showAlert(e.getMessage());
             }
         });
 
-        // ── 8. FORM ROW ─────────────────────────────────────────────
+        // ── 8. FORM ROWS ────────────────────────────────────────────
         HBox inputRow = new HBox(10, trackInput, timeInput, carTypeDropdown, newCarInput, addNewCarBtn, addLapBtn);
         inputRow.setAlignment(Pos.CENTER_LEFT);
 
-        VBox formSection = new VBox(12, formTitle, inputRow, dynamicSetupContainer);
+        Label sectorLabel = new Label("SECTORS  (optional)");
+        sectorLabel.getStyleClass().add("section-badge");
+        Label weatherLabel = new Label("WEATHER");
+        weatherLabel.getStyleClass().add("section-badge");
+        HBox sectorRow = new HBox(10, sectorLabel, s1Input, s2Input, s3Input, weatherLabel, weatherDropdown);
+        sectorRow.setAlignment(Pos.CENTER_LEFT);
+
+        VBox formSection = new VBox(10, formTitle, inputRow, sectorRow, dynamicSetupContainer);
         formSection.getStyleClass().add("form-panel");
         formSection.setPadding(new Insets(14, 18, 14, 18));
 
@@ -448,6 +516,77 @@ public class Launcher extends Application {
 
             table.getColumns().addAll(lapNumCol, timeCol, deltaCol, carCol);
 
+            // ── Sector columns ──────────────────────────────────────
+            TableColumn<LapTime, String> s1Col = new TableColumn<>("S1");
+            s1Col.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getFormattedS1()));
+            s1Col.setPrefWidth(80);
+            s1Col.setCellFactory(col -> new TableCell<>() {
+                @Override protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    getStyleClass().removeAll("sector-cell", "sector-cell-best");
+                    if (item == null || empty) { setText(null); return; }
+                    setText(item);
+                    // Highlight if this is the best S1 in the session
+                    LapTime lap = getTableView().getItems().get(getIndex());
+                    if (lap.getS1Ms() > 0 && isBestSector(trackCarData, lap.getS1Ms(), 1))
+                        getStyleClass().add("sector-cell-best");
+                    else
+                        getStyleClass().add("sector-cell");
+                }
+            });
+
+            TableColumn<LapTime, String> s2Col = new TableColumn<>("S2");
+            s2Col.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getFormattedS2()));
+            s2Col.setPrefWidth(80);
+            s2Col.setCellFactory(col -> new TableCell<>() {
+                @Override protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    getStyleClass().removeAll("sector-cell", "sector-cell-best");
+                    if (item == null || empty) { setText(null); return; }
+                    setText(item);
+                    LapTime lap = getTableView().getItems().get(getIndex());
+                    if (lap.getS2Ms() > 0 && isBestSector(trackCarData, lap.getS2Ms(), 2))
+                        getStyleClass().add("sector-cell-best");
+                    else
+                        getStyleClass().add("sector-cell");
+                }
+            });
+
+            TableColumn<LapTime, String> s3Col = new TableColumn<>("S3");
+            s3Col.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getFormattedS3()));
+            s3Col.setPrefWidth(80);
+            s3Col.setCellFactory(col -> new TableCell<>() {
+                @Override protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    getStyleClass().removeAll("sector-cell", "sector-cell-best");
+                    if (item == null || empty) { setText(null); return; }
+                    setText(item);
+                    LapTime lap = getTableView().getItems().get(getIndex());
+                    if (lap.getS3Ms() > 0 && isBestSector(trackCarData, lap.getS3Ms(), 3))
+                        getStyleClass().add("sector-cell-best");
+                    else
+                        getStyleClass().add("sector-cell");
+                }
+            });
+
+            // ── Weather column ──────────────────────────────────────
+            TableColumn<LapTime, String> weatherCol = new TableColumn<>("COND");
+            weatherCol.setCellValueFactory(cd ->
+                    new SimpleStringProperty(cd.getValue().getWeather().name()));
+            weatherCol.setPrefWidth(72);
+            weatherCol.setCellFactory(col -> new TableCell<>() {
+                @Override protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(null);
+                    if (item == null || empty) { setGraphic(null); return; }
+                    Label pill = new Label(item);
+                    pill.getStyleClass().addAll("weather-pill", "weather-" + item);
+                    setGraphic(pill);
+                }
+            });
+
+            table.getColumns().addAll(s1Col, s2Col, s3Col, weatherCol);
+
             List<String> headers = newLap.getCarUsed().getColumnHeaders();
             int essential        = newLap.getCarUsed().getEssentialColumnCount();
             List<TableColumn<LapTime, String>> advancedCols = new ArrayList<>();
@@ -546,7 +685,7 @@ public class Launcher extends Application {
             seriesMap.put(key, series);
             lapCountMap.put(key, 0);
 
-            VBox tableSection = new VBox(6, exportBar, tableScroll);
+            VBox tableSection = new VBox(6, exportBar, tableScroll, buildSectorSummary(key, trackCarData));
             HBox content = new HBox(14, tableSection, chart);
             content.setPadding(new Insets(10));
             HBox.setHgrow(chart, Priority.ALWAYS);
@@ -570,9 +709,82 @@ public class Launcher extends Application {
                 new XYChart.Data<>("L" + lapNum, newLap.getTimeInMilliseconds() / 1000.0));
 
         updateKpis(key);
+        updateSectorSummary(key);
         dashboard.onNewLap(newLap, key);
         comparison.onNewLap(newLap);
         fuelStrat.onNewLap(newLap);
+    }
+
+    // ── SECTOR SUMMARY BAR ──────────────────────────────────────────
+    private HBox buildSectorSummary(String key, ObservableList<LapTime> laps) {
+        Label s1Lbl = new Label("BEST S1"); s1Lbl.getStyleClass().add("sector-label");
+        Label s2Lbl = new Label("BEST S2"); s2Lbl.getStyleClass().add("sector-label");
+        Label s3Lbl = new Label("BEST S3"); s3Lbl.getStyleClass().add("sector-label");
+        Label thLbl = new Label("THEORETICAL BEST"); thLbl.getStyleClass().add("theo-best-label");
+
+        Label s1Val = new Label("—"); s1Val.getStyleClass().add("sector-value");
+        Label s2Val = new Label("—"); s2Val.getStyleClass().add("sector-value");
+        Label s3Val = new Label("—"); s3Val.getStyleClass().add("sector-value");
+        Label thVal = new Label("—"); thVal.getStyleClass().add("theo-best-value");
+
+        sectorS1Labels.put(key, s1Val);
+        sectorS2Labels.put(key, s2Val);
+        sectorS3Labels.put(key, s3Val);
+        sectorTheoLabels.put(key, thVal);
+
+        VBox s1Card = new VBox(2, s1Lbl, s1Val);
+        VBox s2Card = new VBox(2, s2Lbl, s2Val);
+        VBox s3Card = new VBox(2, s3Lbl, s3Val);
+        VBox thCard = new VBox(2, thLbl, thVal);
+        for (VBox c : List.of(s1Card, s2Card, s3Card, thCard))
+            c.getStyleClass().add("sector-summary-card");
+
+        HBox bar = new HBox(8, s1Card, s2Card, s3Card, thCard);
+        bar.setAlignment(Pos.CENTER_LEFT);
+        return bar;
+    }
+
+    /** Returns true if sectorMs is the best recorded value for the given sector (1/2/3) in laps. */
+    private boolean isBestSector(ObservableList<LapTime> laps, long sectorMs, int sector) {
+        long best = laps.stream()
+                .mapToLong(l -> switch (sector) {
+                    case 1 -> l.getS1Ms();
+                    case 2 -> l.getS2Ms();
+                    default -> l.getS3Ms();
+                })
+                .filter(v -> v > 0)
+                .min().orElse(Long.MAX_VALUE);
+        return sectorMs == best;
+    }
+
+    private void updateSectorSummary(String key) {
+        ObservableList<LapTime> laps = lapDataMap.get(key);
+        if (laps == null) return;
+
+        long bestS1 = laps.stream().mapToLong(LapTime::getS1Ms).filter(v -> v > 0).min().orElse(0);
+        long bestS2 = laps.stream().mapToLong(LapTime::getS2Ms).filter(v -> v > 0).min().orElse(0);
+        long bestS3 = laps.stream().mapToLong(LapTime::getS3Ms).filter(v -> v > 0).min().orElse(0);
+
+        if (sectorS1Labels.containsKey(key))
+            sectorS1Labels.get(key).setText(bestS1 > 0 ? formatMs(bestS1) : "—");
+        if (sectorS2Labels.containsKey(key))
+            sectorS2Labels.get(key).setText(bestS2 > 0 ? formatMs(bestS2) : "—");
+        if (sectorS3Labels.containsKey(key))
+            sectorS3Labels.get(key).setText(bestS3 > 0 ? formatMs(bestS3) : "—");
+
+        if (sectorTheoLabels.containsKey(key)) {
+            if (bestS1 > 0 && bestS2 > 0 && bestS3 > 0) {
+                long theo = bestS1 + bestS2 + bestS3;
+                sectorTheoLabels.get(key).setText(formatMs(theo));
+                // Color red if theoretical best is faster than actual best lap
+                long actualBest = laps.stream().mapToLong(LapTime::getTimeInMilliseconds).min().orElse(Long.MAX_VALUE);
+                sectorTheoLabels.get(key).getStyleClass().removeAll("theo-best-value", "kpi-value-red");
+                sectorTheoLabels.get(key).getStyleClass().add(
+                        theo < actualBest ? "kpi-value-red" : "theo-best-value");
+            } else {
+                sectorTheoLabels.get(key).setText("—");
+            }
+        }
     }
 
     // ── HELPERS ─────────────────────────────────────────────────────

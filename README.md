@@ -23,6 +23,9 @@ Features a live race dashboard, lap comparison tool, fuel strategy calculator, A
 
 ### Garage (Lap Logging)
 - **Flexible time input** — accepts `1.24.500`, `1:24.500`, or raw `84500` ms
+- **Sector times** — optional S1/S2/S3 inputs per lap; best sector in each column highlighted in purple
+- **Weather/condition tagging** — tag each lap: DRY / DAMP / WET / COLD / HOT with colour-coded pill badges
+- **Sector summary bar** — always-visible strip below the table showing best S1, S2, S3 and **Theoretical Best** (sum of best individual sectors); turns red when your theoretical best is faster than your actual best lap
 - **Per-track, per-car tabs** — GT3 and Formula laps kept in separate tables per track
 - **Dynamic setup sliders** — essential controls always visible; advanced settings behind expandable section
 - **Live delta splits** — time gained/lost vs previous lap, colour coded

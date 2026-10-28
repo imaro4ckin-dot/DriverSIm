@@ -1066,3 +1066,82 @@
     -fx-cursor: hand;
 }
 .btn-calculate:hover { -fx-background-color: #BB8009; }
+
+/* ═══════════════════════════════════════════════════════════
+   WEATHER PILL BADGES
+   ═══════════════════════════════════════════════════════════ */
+.weather-pill {
+    -fx-background-radius: 12;
+    -fx-padding: 2 10 2 10;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.weather-DRY  { -fx-background-color: #1A3A5C; -fx-text-fill: #58A6FF; }
+.weather-DAMP { -fx-background-color: #1A3A3A; -fx-text-fill: #39D0D0; }
+.weather-WET  { -fx-background-color: #0D2B40; -fx-text-fill: #79C0FF; }
+.weather-COLD { -fx-background-color: #2A1A4A; -fx-text-fill: #BC8CFF; }
+.weather-HOT  { -fx-background-color: #3A1A00; -fx-text-fill: #FFA657; }
+
+/* ── Sector time columns ─────────────────────────────────── */
+.sector-cell {
+    -fx-text-fill: #8B949E;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.sector-cell-best {
+    -fx-text-fill: #BC8CFF;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+
+/* ── Theoretical best row in garage table ───────────────── */
+.theo-best-row {
+    -fx-background-color: #1E1030;
+    -fx-border-color: transparent transparent #BC8CFF transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.theo-best-row .table-cell {
+    -fx-text-fill: #BC8CFF;
+    -fx-font-weight: bold;
+}
+
+/* ── Sector summary bar (shown below garage table) ──────── */
+.sector-summary-card {
+    -fx-background-color: #161B22;
+    -fx-border-color: #30363D;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 16 10 16;
+}
+.sector-label {
+    -fx-text-fill: #8B949E;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+    -fx-min-width: 60;
+}
+.sector-value {
+    -fx-text-fill: #E6EDF3;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.sector-value-best {
+    -fx-text-fill: #BC8CFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.theo-best-label {
+    -fx-text-fill: #BC8CFF;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
+.theo-best-value {
+    -fx-text-fill: #BC8CFF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+}
