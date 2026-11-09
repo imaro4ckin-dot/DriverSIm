@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.platforms.ACCController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- Info banner: ACC has no public API -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="ASSETTO CORSA COMPETIZIONE" styleClass="section-title"/>
+            <Label text="ACC does not offer a public API. Use file import to load session results from your local ACC installation."
+                   styleClass="comparison-hint" wrapText="true"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Display name" prefWidth="110" styleClass="fuel-field-label"/>
+                <TextField fx:id="accDisplayName" promptText="Your ACC username (optional)" prefWidth="240"/>
+            </HBox>
+        </VBox>
+
+        <!-- File import -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="FILE IMPORT" styleClass="section-title"/>
+            <Label text="Default path: ~/Documents/Assetto Corsa Competizione/Results/"
+                   styleClass="comparison-hint"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="importAccSessionBtn" text="⬆  Import Single Session (.json)" styleClass="btn-success" onAction="#onImportAccSession"/>
+                <Button                              text="⬆  Import Results Folder"          styleClass="btn-success" onAction="#onImportAccFolder"/>
+                <Button fx:id="importMotecCsvBtn"   text="⬆  Import MoTeC CSV"               styleClass="btn-success" onAction="#onImportMotecCsv"/>
+            </HBox>
+            <ProgressBar fx:id="accProgress" prefWidth="300" prefHeight="14" visible="false"/>
+            <Label fx:id="accImportStatus" text="" styleClass="comparison-hint" wrapText="true"/>
+        </VBox>
+
+        <!-- Results -->
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <Tab text="Sessions" closable="false">
+                <TableView fx:id="accSessionsTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+            <Tab text="Lap Data" closable="false">
+                <TableView fx:id="accLapsTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+        </TabPane>
+
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.platforms.IRacingController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- Account section -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="iRACING ACCOUNT" styleClass="section-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Email" prefWidth="80" styleClass="fuel-field-label"/>
+                <TextField fx:id="iracingEmail" promptText="your@email.com" prefWidth="260"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Password" prefWidth="80" styleClass="fuel-field-label"/>
+                <PasswordField fx:id="iracingPassword" prefWidth="260"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="iracingConnectBtn" text="Connect" styleClass="btn-primary" onAction="#onConnect"/>
+                <Button fx:id="iracingSyncBtn"    text="⟳  Sync Recent Races" styleClass="btn-warning" onAction="#onSyncData"/>
+                <Label  fx:id="iracingStatusLabel" text="Not connected" styleClass="comparison-hint"/>
+                <ProgressBar fx:id="syncProgress" prefWidth="100" prefHeight="14" visible="false"/>
+            </HBox>
+        </VBox>
+
+        <!-- File import section -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="FILE IMPORT" styleClass="section-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="importIbtBtn" text="⬆  Import .ibt Telemetry" styleClass="btn-success" onAction="#onImportIbt"/>
+                <Button fx:id="importCsvBtn" text="⬆  Import CSV Export"    styleClass="btn-success" onAction="#onImportCsv"/>
+            </HBox>
+            <Label fx:id="importStatusLabel" text="" styleClass="comparison-hint" wrapText="true"/>
+        </VBox>
+
+        <!-- Data tabs -->
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <Tab text="Recent Races" closable="false">
+                <TableView fx:id="recentRacesTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+            <Tab text="Lap Data" closable="false">
+                <TableView fx:id="lapDataTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+            <Tab text="Driver Stats" closable="false">
+                <ScrollPane fitToWidth="true">
+                    <VBox fx:id="driverStatsBox" spacing="10">
+                        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                        <Label text="Connect to load driver statistics" styleClass="comparison-hint"/>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+
+    </VBox>
+</ScrollPane>

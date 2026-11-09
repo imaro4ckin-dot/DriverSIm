@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.FuelStrategyController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox fx:id="fuelRoot" styleClass="fuel-root" spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- Input card -->
+        <VBox styleClass="fuel-input-card" spacing="14">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+
+            <GridPane hgap="16" vgap="10">
+                <!-- Row 0 -->
+                <Label text="Race Laps"             styleClass="fuel-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Spinner fx:id="raceLapsSpinner"    editable="true" prefWidth="120"  GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label text="Tank Capacity (L/kg)"  styleClass="fuel-field-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <Spinner fx:id="tankCapSpinner"     editable="true" prefWidth="120"  GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                <!-- Row 1 -->
+                <Label text="Fuel per Lap (L/kg)"   styleClass="fuel-field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Spinner fx:id="fuelPerLapSpinner"  editable="true" prefWidth="120"  GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label text="Safety Car Laps"        styleClass="fuel-field-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <Spinner fx:id="safetyCarLapsSpinner" editable="true" prefWidth="120" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                <!-- Row 2 -->
+                <Label text="Planned Pit Stops"      styleClass="fuel-field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Spinner fx:id="pitStopsSpinner"    editable="true" prefWidth="120"  GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+
+            <Button text="⚙  CALCULATE STRATEGY" styleClass="btn-calculate" onAction="#onCalculate"/>
+        </VBox>
+
+        <!-- Result cards -->
+        <HBox spacing="12">
+            <VBox styleClass="fuel-result-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="TOTAL FUEL"   styleClass="fuel-result-label"/>
+                <Label fx:id="totalFuelValue"    text="—" styleClass="fuel-result-value"/>
+            </VBox>
+            <VBox styleClass="fuel-result-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="FUEL / STINT" styleClass="fuel-result-label"/>
+                <Label fx:id="fuelPerStintValue" text="—" styleClass="fuel-result-value"/>
+            </VBox>
+            <VBox styleClass="fuel-result-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="STINTS"       styleClass="fuel-result-label"/>
+                <Label fx:id="stintsValue"       text="—" styleClass="fuel-result-value"/>
+            </VBox>
+            <VBox styleClass="fuel-result-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="ALWAYS">
+                <Label text="SAFETY MARGIN" styleClass="fuel-result-label"/>
+                <Label fx:id="marginValue"       text="—" styleClass="fuel-result-value"/>
+            </VBox>
+        </HBox>
+
+        <!-- Fuel bar -->
+        <VBox spacing="6">
+            <Label text="FUEL USAGE vs TANK CAPACITY" styleClass="fuel-result-label"/>
+            <StackPane fx:id="fuelBar" prefHeight="10">
+                <Region fx:id="fuelBarBg"   styleClass="fuel-bar-bg"  prefHeight="10" maxWidth="1.7976931348623157E308"/>
+                <Region fx:id="fuelFill"    styleClass="fuel-bar-fill" maxWidth="0" StackPane.alignment="CENTER_LEFT"/>
+            </StackPane>
+            <Label fx:id="warningLabel" text="" styleClass="fuel-warning-label" wrapText="true"/>
+        </VBox>
+
+        <!-- Stint table -->
+        <Label text="STINT PLAN" styleClass="fuel-result-label"/>
+        <TableView fx:id="stintTable" styleClass="stint-table" prefHeight="220" VBox.vgrow="ALWAYS"/>
+
+    </VBox>
+</ScrollPane>

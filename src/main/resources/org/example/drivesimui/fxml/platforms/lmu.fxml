@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.platforms.LMUController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- Account section -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="LE MANS ULTIMATE" styleClass="section-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Display name" prefWidth="110" styleClass="fuel-field-label"/>
+                <TextField fx:id="lmuDisplayName" promptText="Your LMU username (optional)" prefWidth="240"/>
+            </HBox>
+        </VBox>
+
+        <!-- Live rF2 REST API section -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="LIVE API  (rF2 REST — requires LMU running)" styleClass="section-title"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="API URL" prefWidth="80" styleClass="fuel-field-label"/>
+                <TextField fx:id="lmuApiUrl" text="http://localhost:5397" prefWidth="220"/>
+                <Button fx:id="fetchLiveDataBtn" text="▶  Fetch Live Data"
+                        styleClass="btn-primary" onAction="#onFetchLiveData"/>
+                <Label fx:id="lmuApiStatus" text="" styleClass="comparison-hint"/>
+            </HBox>
+        </VBox>
+
+        <!-- File import -->
+        <VBox styleClass="fuel-input-card" spacing="10">
+            <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+            <Label text="FILE IMPORT" styleClass="section-title"/>
+            <Label text="Default path: ~/Documents/Le Mans Ultimate/UserData/player/Results/"
+                   styleClass="comparison-hint"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="importLmuResultsBtn" text="⬆  Import LMU Result Files"
+                        styleClass="btn-success" onAction="#onImportLmuResults"/>
+            </HBox>
+            <ProgressBar fx:id="lmuProgress" prefWidth="300" prefHeight="14" visible="false"/>
+            <Label fx:id="lmuImportStatus" text="" styleClass="comparison-hint" wrapText="true"/>
+        </VBox>
+
+        <!-- Results -->
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <Tab text="Sessions" closable="false">
+                <TableView fx:id="lmuSessionsTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+            <Tab text="Lap Data" closable="false">
+                <TableView fx:id="lmuLapsTable" VBox.vgrow="ALWAYS"/>
+            </Tab>
+        </TabPane>
+
+    </VBox>
+</ScrollPane>

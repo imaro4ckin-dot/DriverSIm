@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.drivesimui.controller.platforms.PlatformsController"
+      VBox.vgrow="ALWAYS">
+
+    <TabPane fx:id="platformsTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <Tab text="  iRACING  " closable="false">
+            <fx:include fx:id="iracing" source="iracing.fxml"/>
+        </Tab>
+        <Tab text="  ACC  " closable="false">
+            <fx:include fx:id="acc" source="acc.fxml"/>
+        </Tab>
+        <Tab text="  LMU  " closable="false">
+            <fx:include fx:id="lmu" source="lmu.fxml"/>
+        </Tab>
+    </TabPane>
+
+</VBox>

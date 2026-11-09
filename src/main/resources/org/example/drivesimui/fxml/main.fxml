@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.MainController"
+            styleClass="main-container">
+
+    <!-- KPI header bar -->
+    <top>
+        <HBox fx:id="kpiBar" styleClass="kpi-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="0" right="12" bottom="0" left="12"/></padding>
+            <HBox fx:id="appNameBox" alignment="CENTER_LEFT" spacing="0">
+                <Label fx:id="titleLabel" text="DRIVER" styleClass="app-title"/>
+                <Label fx:id="titleAccent" text="SIM" styleClass="kpi-value-red"
+                       style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox fx:id="kpiBestCard"  styleClass="kpi-card" alignment="CENTER" spacing="2">
+                <Label text="BEST LAP"  styleClass="kpi-label"/>
+                <Label fx:id="kpiBestValue"  text="—" styleClass="kpi-value-red"/>
+            </VBox>
+            <VBox fx:id="kpiLastCard"  styleClass="kpi-card" alignment="CENTER" spacing="2">
+                <Label text="LAST LAP"  styleClass="kpi-label"/>
+                <Label fx:id="kpiLastValue"  text="—" styleClass="kpi-value"/>
+            </VBox>
+            <VBox fx:id="kpiTotalCard" styleClass="kpi-card" alignment="CENTER" spacing="2">
+                <Label text="TOTAL LAPS" styleClass="kpi-label"/>
+                <Label fx:id="kpiTotalValue" text="0" styleClass="kpi-value"/>
+            </VBox>
+            <VBox fx:id="kpiSessionCard" styleClass="kpi-card" alignment="CENTER" spacing="2">
+                <Label text="SESSION"   styleClass="kpi-label"/>
+                <Label fx:id="kpiSessionValue" text="—" styleClass="kpi-value"/>
+            </VBox>
+        </HBox>
+    </top>
+
+    <!-- Main tab pane — each tab content loaded via fx:include -->
+    <center>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <Tab text="  DASHBOARD  " closable="false">
+                <fx:include fx:id="dashboard" source="dashboard.fxml"/>
+            </Tab>
+            <Tab text="  GARAGE  " closable="false">
+                <fx:include fx:id="garage" source="garage.fxml"/>
+            </Tab>
+            <Tab text="  LAP ANALYSIS  " closable="false">
+                <fx:include fx:id="lapComparison" source="lap-comparison.fxml"/>
+            </Tab>
+            <Tab text="  FUEL STRATEGY  " closable="false">
+                <fx:include fx:id="fuelStrategy" source="fuel-strategy.fxml"/>
+            </Tab>
+            <Tab text="  PLATFORMS  " closable="false">
+                <fx:include fx:id="platforms" source="platforms/platforms.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+
+</BorderPane>

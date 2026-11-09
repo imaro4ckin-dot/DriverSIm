@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class LapTime implements DataExport {
 
     // ── Core fields ──────────────────────────────────────────────────
+    private long      id = 0;          // 0 = not yet persisted
     private String    trackName;
     private long      timeInMilSec;
     private LocalDate dateRecorded;
@@ -87,10 +88,14 @@ public class LapTime implements DataExport {
     }
 
     // ── Getters / Setters ────────────────────────────────────────────
-    public String    getTrackName()           { return trackName; }
-    public long      getTimeInMilliseconds()  { return timeInMilSec; }
-    public Vehicle   getCarUsed()             { return carUsed; }
-    public LocalDate getDateRecorded()        { return dateRecorded; }
+    public long      getId()                      { return id; }
+    public void      setId(long id)               { this.id = id; }
+
+    public String    getTrackName()               { return trackName; }
+    public long      getTimeInMilliseconds()      { return timeInMilSec; }
+    public Vehicle   getCarUsed()                 { return carUsed; }
+    public LocalDate getDateRecorded()            { return dateRecorded; }
+    public void      setDateRecorded(LocalDate d) { this.dateRecorded = d; }
 
     public long      getDeltaMs()             { return deltaMs; }
     public void      setDeltaMs(long deltaMs) { this.deltaMs = deltaMs; }

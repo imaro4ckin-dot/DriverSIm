@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<!--
+  Live Dashboard tab.
+  The stopwatch controls, table columns, and events list are wired
+  programmatically in DashboardController.initialize().
+-->
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.DashboardController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox fx:id="dashboardRoot" styleClass="dashboard-root" spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- ── Top row: stopwatch + stat cards ─────────────────── -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+
+            <!-- Stopwatch card -->
+            <VBox fx:id="stopwatchCard" styleClass="stopwatch-card" alignment="CENTER" spacing="8">
+                <Label text="LAP TIMER" styleClass="stat-card-header"/>
+                <Label fx:id="timerDisplay" text="0:00.000" styleClass="stopwatch-display"/>
+                <HBox spacing="8" alignment="CENTER">
+                    <Button fx:id="startStopBtn" text="▶  START" styleClass="btn-timer-start"
+                            onAction="#onStartStopTimer"/>
+                    <Button fx:id="resetBtn"     text="RESET"   styleClass="btn-timer-reset"
+                            onAction="#onResetTimer"/>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="bestLapCard"    styleClass="stat-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="SOMETIMES">
+                <Label text="BEST LAP"    styleClass="stat-card-header"/>
+                <Label fx:id="bestLapValue"    text="—" styleClass="stat-card-value-red"/>
+            </VBox>
+            <VBox fx:id="lastLapCard"    styleClass="stat-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="SOMETIMES">
+                <Label text="LAST LAP"    styleClass="stat-card-header"/>
+                <Label fx:id="lastLapValue"    text="—" styleClass="stat-card-value"/>
+            </VBox>
+            <VBox fx:id="avgLapCard"     styleClass="stat-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="SOMETIMES">
+                <Label text="AVG LAP"     styleClass="stat-card-header"/>
+                <Label fx:id="avgLapValue"     text="—" styleClass="stat-card-value"/>
+            </VBox>
+            <VBox fx:id="consistencyCard" styleClass="stat-card" alignment="CENTER_LEFT" spacing="4" HBox.hgrow="SOMETIMES">
+                <Label text="CONSISTENCY" styleClass="stat-card-header"/>
+                <Label fx:id="consistencyValue" text="—" styleClass="stat-card-value-green"/>
+            </VBox>
+
+            <!-- Track state card -->
+            <VBox fx:id="trackStateCard" styleClass="track-state-card" alignment="CENTER" spacing="8">
+                <Label text="TRACK STATE" styleClass="stat-card-header"/>
+                <Label fx:id="trackStateLabel" text="GREEN" styleClass="track-state-green"
+                       maxWidth="1.7976931348623157E308"/>
+            </VBox>
+        </HBox>
+
+        <!-- ── Bottom row ──────────────────────────────────────── -->
+        <HBox spacing="12" VBox.vgrow="ALWAYS">
+
+            <!-- Recent laps table -->
+            <VBox styleClass="dash-panel" spacing="8" minWidth="380" HBox.hgrow="ALWAYS">
+                <Label text="RECENT LAPS" styleClass="dash-panel-title"/>
+                <TableView fx:id="dashTable" styleClass="dash-lap-table" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <!-- Session stats -->
+            <VBox styleClass="dash-panel" spacing="10" prefWidth="230" minWidth="200">
+                <Label text="SESSION STATS" styleClass="dash-panel-title"/>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="TOTAL LAPS"  styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="totalLapsValue"  text="0"    styleClass="dash-stat-row-value"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="BEST LAP"    styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="statBestLapValue" text="—"  styleClass="dash-stat-row-value"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="AVERAGE"     styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="statAvgValue"     text="—"  styleClass="dash-stat-row-value"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="CONSISTENCY" styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="statConsistencyValue" text="—" styleClass="dash-stat-row-value"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="TRACK TIME"  styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="trackTimeValue"  text="0:00" styleClass="dash-stat-row-value"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="GAP TO BEST" styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="gapToBestValue"  text="—"   styleClass="dash-stat-row-value"/>
+                </HBox>
+                <Separator/>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="CLOCK"       styleClass="dash-stat-row-label"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="clockLabel"      text=""    styleClass="clock-display"/>
+                </HBox>
+            </VBox>
+
+            <!-- Events log -->
+            <VBox styleClass="dash-panel" spacing="8" minWidth="260" HBox.hgrow="ALWAYS">
+                <Label text="RACE EVENTS" styleClass="dash-panel-title"/>
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" prefHeight="300"
+                            style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <VBox fx:id="eventsBox" spacing="0"/>
+                </ScrollPane>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<!--
+  Garage tab — track TabPane at top, entry form + AI engineer below.
+  Dynamic setup sliders (GT3 / Formula) are built programmatically
+  by GarageController and inserted into dynamicSetupContainer.
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.drivesimui.controller.GarageController"
+      spacing="0" VBox.vgrow="ALWAYS">
+
+    <!-- Track tabs — populated at runtime by GarageController -->
+    <TabPane fx:id="trackTabPane" tabClosingPolicy="UNAVAILABLE"
+             styleClass="main-tab-pane" VBox.vgrow="ALWAYS"/>
+
+    <!-- Bottom: form + AI -->
+    <VBox spacing="10" style="-fx-padding: 10 12 10 12;">
+
+        <!-- ── ENTRY FORM ────────────────────────────────────────── -->
+        <VBox fx:id="formSection" styleClass="form-panel" spacing="10">
+            <padding><Insets top="14" right="18" bottom="14" left="18"/></padding>
+
+            <Label text="NEW TELEMETRY ENTRY" styleClass="section-title"/>
+
+            <!-- Main input row -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="trackInput"    promptText="Track  (e.g. Monza)" prefWidth="160"/>
+                <TextField fx:id="timeInput"     promptText="Time  e.g. 1.24.500  or  84500" prefWidth="170"/>
+                <ComboBox  fx:id="carTypeDropdown" prefWidth="180"/>
+                <TextField fx:id="newCarInput"   promptText="Add new car..." prefWidth="140"/>
+                <Button    fx:id="addNewCarBtn"  text="+" styleClass="btn-add"
+                           onAction="#onAddCar"/>
+                <Button    fx:id="addLapBtn"     text="▶  LOG LAP" styleClass="btn-primary"
+                           onAction="#onAddLap"/>
+            </HBox>
+
+            <!-- Sector + weather row -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="SECTORS  (optional)" styleClass="section-badge"/>
+                <TextField fx:id="s1Input" promptText="S1  e.g. 0.28.100" prefWidth="140"/>
+                <TextField fx:id="s2Input" promptText="S2  e.g. 0.31.200" prefWidth="140"/>
+                <TextField fx:id="s3Input" promptText="S3  e.g. 0.25.000" prefWidth="140"/>
+                <Label text="WEATHER" styleClass="section-badge"/>
+                <ComboBox  fx:id="weatherDropdown" prefWidth="90"/>
+            </HBox>
+
+            <!-- Dynamic setup sliders inserted here by GarageController -->
+            <VBox fx:id="dynamicSetupContainer" styleClass="setup-panel"/>
+        </VBox>
+
+        <!-- ── AI RACE ENGINEER ──────────────────────────────────── -->
+        <VBox fx:id="aiSection" styleClass="ai-panel" spacing="10">
+            <padding><Insets top="14" right="18" bottom="14" left="18"/></padding>
+            <Label text="⚡  AI RACE ENGINEER" styleClass="ai-title"/>
+            <TextArea fx:id="aiOutputBox"
+                      promptText="Select a track tab and click 'Analyze Session' to get setup advice from your AI race engineer..."
+                      wrapText="true" prefHeight="90" editable="false"/>
+            <HBox alignment="CENTER_RIGHT">
+                <Button fx:id="askEngineerBtn" text="◉  Analyze Session"
+                        styleClass="btn-warning" onAction="#onAnalyzeSession"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+</VBox>

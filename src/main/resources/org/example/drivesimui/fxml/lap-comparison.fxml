@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.LapComparisonController"
+            fitToWidth="true" fitToHeight="true"
+            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+
+    <VBox fx:id="comparisonRoot" styleClass="comparison-root" spacing="14">
+        <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+
+        <!-- Header card: selectors + badges -->
+        <VBox styleClass="comparison-header-card" spacing="14">
+            <padding><Insets top="12" right="16" bottom="12" left="16"/></padding>
+
+            <!-- Selector row -->
+            <HBox spacing="16" alignment="BOTTOM_LEFT">
+                <VBox spacing="4">
+                    <Label text="LAP A" styleClass="comparison-lap-label"/>
+                    <ComboBox fx:id="lapASelector" promptText="Select Lap A…" prefWidth="320"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="LAP B" styleClass="comparison-lap-label"/>
+                    <ComboBox fx:id="lapBSelector" promptText="Select Lap B…" prefWidth="320"/>
+                </VBox>
+                <Button text="⇄  COMPARE" styleClass="btn-primary" onAction="#onCompare"/>
+            </HBox>
+
+            <!-- Lap time badges -->
+            <HBox spacing="12">
+                <VBox styleClass="comparison-lap-badge" prefWidth="240" spacing="2" alignment="CENTER_LEFT">
+                    <Label text="LAP A" styleClass="comparison-lap-label"/>
+                    <Label fx:id="lapATime"  text="—" styleClass="comparison-lap-time"/>
+                    <Label fx:id="lapACar"   text=""  styleClass="comparison-hint"/>
+                    <Label fx:id="lapATrack" text=""  styleClass="comparison-hint"/>
+                </VBox>
+                <VBox styleClass="comparison-lap-badge-b" prefWidth="240" spacing="2" alignment="CENTER_LEFT">
+                    <Label text="LAP B" styleClass="comparison-lap-label"/>
+                    <Label fx:id="lapBTime"  text="—" styleClass="comparison-lap-time"/>
+                    <Label fx:id="lapBCar"   text=""  styleClass="comparison-hint"/>
+                    <Label fx:id="lapBTrack" text=""  styleClass="comparison-hint"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <Label text="Green = that parameter helped achieve the faster time   |   Red = differed negatively   |   Gray = identical"
+               styleClass="comparison-hint"/>
+
+        <!-- Diff table (columns built in controller) -->
+        <TableView fx:id="diffTable" styleClass="diff-table" VBox.vgrow="ALWAYS"/>
+
+        <!-- Verdict -->
+        <VBox styleClass="verdict-card">
+            <padding><Insets top="12" right="18" bottom="12" left="18"/></padding>
+            <Label fx:id="verdictLabel" text="Select two laps to compare."
+                   styleClass="verdict-text" wrapText="true"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>
