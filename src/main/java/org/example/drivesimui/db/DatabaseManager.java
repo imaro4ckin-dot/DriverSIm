@@ -138,6 +138,15 @@ public class DatabaseManager {
                     import_date TEXT
                 )
             """);
+
+            st.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS irating_history (
+                    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                    platform  TEXT    NOT NULL,
+                    irating   INTEGER NOT NULL,
+                    recorded  TEXT    NOT NULL
+                )
+            """);
         }
     }
 }

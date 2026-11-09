@@ -7,17 +7,25 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.example.drivesimui.db.DriverStatsRepository;
 import org.example.drivesimui.db.LapRepository;
 import org.example.drivesimui.db.SessionRepository;
 import org.example.drivesimui.model.DriverProfile;
 import org.example.drivesimui.model.RaceSession;
+import org.example.drivesimui.service.CredentialService;
 import org.example.drivesimui.service.IRacingService;
+import org.example.drivesimui.util.TimeFormatter;
 
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -40,29 +48,37 @@ public class IRacingController implements Initializable {
     @FXML private Button          importCsvBtn;
     @FXML private Label           importStatusLabel;
 
-    // ── Data tables ────────────────────────────────────────────────────────
+    // ── Data tables + stats ────────────────────────────────────────────────
     @FXML private TableView<RaceSession> recentRacesTable;
     @FXML private TableView<String>      lapDataTable;
     @FXML private VBox                   driverStatsBox;
 
     // ── State ──────────────────────────────────────────────────────────────
-    private LapRepository     lapRepo;
-    private SessionRepository sessionRepo;
-    private IRacingService    iRacingService;
+    private LapRepository         lapRepo;
+    private SessionRepository     sessionRepo;
+    private DriverStatsRepository statsRepo;
+    private IRacingService        iRacingService;
+    private CredentialService     credService;
 
     private final ObservableList<RaceSession> recentRaces = FXCollections.observableArrayList();
+
+    private static final DateTimeFormatter CHART_DATE_FMT =
+            DateTimeFormatter.ofPattern("MMM dd");
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         iRacingService = new IRacingService();
+        credService    = new CredentialService();
         buildRacesTable();
         iracingSyncBtn.setDisable(true);
         syncProgress.setVisible(false);
     }
 
-    public void setRepositories(LapRepository lapRepo, SessionRepository sessionRepo) {
-        this.lapRepo     = lapRepo;
+    public void setRepositories(LapRepository lapRepo, SessionRepository sessionRepo,
+                                 DriverStatsRepository statsRepo) {
+        this.lapRepo    = lapRepo;
         this.sessionRepo = sessionRepo;
+        this.statsRepo  = statsRepo;
         loadSavedAccount();
     }
 
@@ -80,18 +96,30 @@ public class IRacingController implements Initializable {
         syncProgress.setVisible(true);
         syncProgress.setProgress(-1);
 
+        // Copy password to char[] before async work; clear field immediately
+        char[] pwChars = pw.toCharArray();
+        iracingPassword.clear();
+
         Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                iRacingService.authenticate(email, pw);
+                iRacingService.authenticate(email, new String(pwChars));
+
+                // Save credential (zeros pwChars internally)
+                try { credService.savePassword("IRACING", pwChars); }
+                catch (Exception ce) {
+                    System.err.println("[IRacingController] Could not save credential: " + ce.getMessage());
+                    Arrays.fill(pwChars, '\0');
+                }
+
                 Platform.runLater(() -> {
-                    setStatus("Connected as " + email, "status-ok");
+                    setStatus("Connected as " + email + "  —  credential saved", "status-ok");
                     iracingSyncBtn.setDisable(false);
-                    iracingPassword.clear();
                     syncProgress.setVisible(false);
                     iracingConnectBtn.setDisable(false);
                     if (sessionRepo != null) sessionRepo.savePlatformAccount("IRACING", email, email, "");
                 });
             } catch (Exception ex) {
+                Arrays.fill(pwChars, '\0');
                 Platform.runLater(() -> {
                     setStatus("Connection failed: " + ex.getMessage(), "status-warn");
                     syncProgress.setVisible(false);
@@ -121,6 +149,12 @@ public class IRacingController implements Initializable {
                     iracingSyncBtn.setDisable(false);
                     syncProgress.setVisible(false);
                     if (sessionRepo != null) sessions.forEach(s -> sessionRepo.insert(s));
+                    if (statsRepo != null) {
+                        statsRepo.upsert(profile);
+                        statsRepo.insertIRatingSnapshot("IRACING", profile.getIrating(),
+                                LocalDate.now().toString());
+                        refreshIRatingChart();
+                    }
                 });
             } catch (Exception ex) {
                 Platform.runLater(() -> {
@@ -181,12 +215,104 @@ public class IRacingController implements Initializable {
     // ── Helpers ────────────────────────────────────────────────────────────
 
     private void loadSavedAccount() {
-        if (sessionRepo == null) return;
-        String savedEmail = sessionRepo.loadPlatformEmail("IRACING");
-        if (savedEmail != null && !savedEmail.isEmpty()) {
-            iracingEmail.setText(savedEmail);
-            setStatus("Saved account: " + savedEmail + " — enter password to reconnect.", "status-neutral");
+        // Pre-fill email from DB
+        if (sessionRepo != null) {
+            String savedEmail = sessionRepo.loadPlatformEmail("IRACING");
+            if (savedEmail != null && !savedEmail.isEmpty()) {
+                iracingEmail.setText(savedEmail);
+            }
         }
+
+        // Pre-fill password from encrypted credential file
+        if (credService.hasSavedCredential("IRACING")) {
+            try {
+                char[] saved = credService.loadPassword("IRACING");
+                iracingPassword.setText(new String(saved));
+                Arrays.fill(saved, '\0');
+                setStatus("Saved credential loaded — click Connect.", "status-neutral");
+            } catch (Exception ex) {
+                setStatus("Could not load saved credential: " + ex.getMessage(), "status-warn");
+            }
+        }
+
+        // Load last-known driver stats from DB
+        if (statsRepo != null) {
+            DriverProfile last = statsRepo.findLatestByPlatform("IRACING");
+            if (last != null) renderDriverStats(last);
+        }
+    }
+
+    // ── Driver stats + iRating chart ──────────────────────────────────────
+
+    private void renderDriverStats(DriverProfile p) {
+        if (p == null) return;
+        driverStatsBox.getChildren().clear();
+
+        // Stat labels
+        Label title = new Label("DRIVER STATS");
+        title.getStyleClass().add("section-title");
+        driverStatsBox.getChildren().add(title);
+
+        driverStatsBox.getChildren().addAll(
+                statLabel("Driver",        p.getDriverName()),
+                statLabel("iRating",       String.valueOf(p.getIrating())),
+                statLabel("Safety Rating", String.format("%.2f  %s", p.getSafetyRating(), p.getLicenseClass())),
+                statLabel("Total Races",   String.valueOf(p.getTotalRaces())),
+                statLabel("Wins",          String.valueOf(p.getWins())),
+                statLabel("Podiums",       String.valueOf(p.getPodiums())),
+                statLabel("Avg Finish",    String.format("%.1f", p.getAvgFinishPos()))
+        );
+
+        // iRating trend chart (populated from DB history)
+        refreshIRatingChart();
+    }
+
+    private void refreshIRatingChart() {
+        if (statsRepo == null) return;
+        List<long[]> history = statsRepo.loadIRatingHistory("IRACING");
+        if (history.size() < 2) return;  // need at least 2 points for a trend
+
+        // Remove any existing chart (last child if it's a LineChart)
+        if (!driverStatsBox.getChildren().isEmpty() &&
+                driverStatsBox.getChildren().get(driverStatsBox.getChildren().size() - 1)
+                        instanceof LineChart<?,?>) {
+            driverStatsBox.getChildren().remove(driverStatsBox.getChildren().size() - 1);
+        }
+
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Date");
+
+        long minIr = history.stream().mapToLong(r -> r[1]).min().orElse(1000);
+        long maxIr = history.stream().mapToLong(r -> r[1]).max().orElse(2000);
+        NumberAxis yAxis = new NumberAxis(minIr - 100, maxIr + 100, 100);
+        yAxis.setLabel("iRating");
+        yAxis.setAutoRanging(false);
+
+        LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
+        chart.setTitle("iRATING TREND");
+        chart.setLegendVisible(false);
+        chart.setAnimated(false);
+        chart.setCreateSymbols(true);
+        chart.setPrefHeight(220);
+        chart.setPrefWidth(Double.MAX_VALUE);
+        VBox.setMargin(chart, new Insets(12, 0, 0, 0));
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for (long[] point : history) {
+            String dateLabel;
+            try {
+                dateLabel = LocalDate.ofEpochDay(point[0]).format(CHART_DATE_FMT);
+            } catch (Exception ex) {
+                dateLabel = String.valueOf(point[0]);
+            }
+            series.getData().add(new XYChart.Data<>(dateLabel, point[1]));
+        }
+        chart.getData().add(series);
+
+        // Rotate x-axis labels to avoid overlap
+        xAxis.setTickLabelRotation(-45);
+
+        driverStatsBox.getChildren().add(chart);
     }
 
     private void buildRacesTable() {
@@ -224,29 +350,15 @@ public class IRacingController implements Initializable {
         TableColumn<RaceSession, String> bestCol = new TableColumn<>("BEST LAP");
         bestCol.setCellValueFactory(cd -> {
             long ms = cd.getValue().getBestLapMs();
-            return new SimpleStringProperty(ms > 0 ? org.example.drivesimui.util.TimeFormatter.formatMs(ms) : "—");
+            return new SimpleStringProperty(ms > 0 ? TimeFormatter.formatMs(ms) : "—");
         });
         bestCol.setPrefWidth(90);
 
         recentRacesTable.getColumns().addAll(dateCol, trackCol, carCol, typeCol, posCol, bestCol);
     }
 
-    private void renderDriverStats(DriverProfile p) {
-        if (p == null) return;
-        driverStatsBox.getChildren().clear();
-        driverStatsBox.getChildren().addAll(
-                statLabel("Driver",         p.getDriverName()),
-                statLabel("iRating",        String.valueOf(p.getIrating())),
-                statLabel("Safety Rating",  String.format("%.2f %s", p.getSafetyRating(), p.getLicenseClass())),
-                statLabel("Total Races",    String.valueOf(p.getTotalRaces())),
-                statLabel("Wins",           String.valueOf(p.getWins())),
-                statLabel("Podiums",        String.valueOf(p.getPodiums())),
-                statLabel("Avg Finish",     String.format("%.1f", p.getAvgFinishPos()))
-        );
-    }
-
     private Label statLabel(String key, String value) {
-        Label l = new Label(key + ": " + value);
+        Label l = new Label(key + ":  " + value);
         l.getStyleClass().add("driver-stat-label");
         return l;
     }

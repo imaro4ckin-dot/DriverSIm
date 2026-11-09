@@ -552,6 +552,28 @@
     -fx-background-insets: 0, 2px;
     -fx-padding: 5px;
 }
+.default-color1.chart-series-line {
+    -fx-stroke: #3FB950;
+    -fx-stroke-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(63,185,80,0.5), 6, 0, 0, 0);
+}
+.default-color1.chart-line-symbol {
+    -fx-background-color: #3FB950, #0D1117;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0, 2px;
+    -fx-padding: 5px;
+}
+.default-color2.chart-series-line {
+    -fx-stroke: #BC8CFF;
+    -fx-stroke-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(188,140,255,0.5), 6, 0, 0, 0);
+}
+.default-color2.chart-line-symbol {
+    -fx-background-color: #BC8CFF, #0D1117;
+    -fx-background-radius: 6px;
+    -fx-background-insets: 0, 2px;
+    -fx-padding: 5px;
+}
 .chart-legend {
     -fx-background-color: transparent;
 }

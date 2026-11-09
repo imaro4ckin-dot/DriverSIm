@@ -52,6 +52,7 @@ public class GarageController implements Initializable {
     // ── State maps ─────────────────────────────────────────────────────────
     private final Map<String, ObservableList<LapTime>>           lapDataMap     = new HashMap<>();
     private final Map<String, XYChart.Series<String, Number>>    seriesMap      = new HashMap<>();
+    private final Map<String, XYChart.Series<String, Number>[]>  sectorSeriesMap = new HashMap<>();
     private final Map<String, Integer>                           lapCountMap    = new HashMap<>();
     private final Map<String, List<TableColumn<LapTime, String>>> advancedColMap = new HashMap<>();
     private final Map<String, TabPane>  trackSubTabPanes = new HashMap<>();
@@ -209,24 +210,38 @@ public class GarageController implements Initializable {
             List<String> exportSelectedCols = new ArrayList<>(headers);
             HBox exportBar = buildExportBar(key, track, carType, table, advancedCols, headers, exportSelectedCols);
 
-            // Chart
+            // Lap trend chart
             CategoryAxis xAxis = new CategoryAxis(); xAxis.setLabel("Lap");
             NumberAxis   yAxis = new NumberAxis();   yAxis.setLabel("Time (s)"); yAxis.setAutoRanging(true);
-            LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
-            chart.setTitle(track + "  ·  " + carType);
-            chart.setPrefWidth(440); chart.setPrefHeight(290);
-            chart.setAnimated(true); chart.setCreateSymbols(true); chart.setLegendVisible(false);
+            LineChart<String, Number> lapChart = new LineChart<>(xAxis, yAxis);
+            lapChart.setTitle(track + "  ·  " + carType);
+            lapChart.setPrefWidth(440); lapChart.setPrefHeight(260);
+            lapChart.setAnimated(true); lapChart.setCreateSymbols(true); lapChart.setLegendVisible(false);
 
             XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName("Lap Trend");
-            chart.getData().add(series);
+            lapChart.getData().add(series);
             seriesMap.put(key, series);
             lapCountMap.put(key, 0);
 
+            // Sector trend charts (S1/S2/S3)
+            HBox sectorChartsBox = buildSectorCharts(key);
+
+            // Chart tab pane
+            TabPane chartTabs = new TabPane();
+            chartTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+            chartTabs.getStyleClass().add("inner-chart-tabs");
+            Tab lapTrendTab  = new Tab("LAP TREND", lapChart);
+            Tab sectorTab    = new Tab("SECTORS",   sectorChartsBox);
+            lapTrendTab.setClosable(false);
+            sectorTab.setClosable(false);
+            chartTabs.getTabs().addAll(lapTrendTab, sectorTab);
+            chartTabs.setPrefWidth(460);
+
             VBox tableSection = new VBox(6, exportBar, tableScroll, buildSectorSummary(key, trackCarData));
-            HBox content = new HBox(14, tableSection, chart);
+            HBox content = new HBox(14, tableSection, chartTabs);
             content.setPadding(new Insets(10));
-            HBox.setHgrow(chart, Priority.ALWAYS);
+            HBox.setHgrow(chartTabs, Priority.ALWAYS);
 
             Tab carTab = new Tab(carType, content);
             trackSubTabPanes.get(track).getTabs().add(carTab);
@@ -245,6 +260,7 @@ public class GarageController implements Initializable {
                 new XYChart.Data<>("L" + lapNum, newLap.getTimeInMilliseconds() / 1000.0));
 
         updateSectorSummary(key);
+        updateSectorCharts(key);
         if (mainController != null) mainController.onLapLogged(newLap, key);
     }
 
@@ -451,6 +467,63 @@ public class GarageController implements Initializable {
                 sectorTheoLabels.get(key).setText("—");
             }
         }
+    }
+
+    // ── Sector trend charts ───────────────────────────────────────────────
+
+    @SuppressWarnings("unchecked")
+    private HBox buildSectorCharts(String key) {
+        XYChart.Series<String, Number> s1Series = new XYChart.Series<>();
+        XYChart.Series<String, Number> s2Series = new XYChart.Series<>();
+        XYChart.Series<String, Number> s3Series = new XYChart.Series<>();
+        sectorSeriesMap.put(key, new XYChart.Series[]{s1Series, s2Series, s3Series});
+
+        HBox box = new HBox(8);
+        box.setAlignment(Pos.TOP_LEFT);
+        HBox.setHgrow(box, Priority.ALWAYS);
+
+        String[] titles = {"S1 TREND", "S2 TREND", "S3 TREND"};
+        XYChart.Series<String, Number>[] allSeries = new XYChart.Series[]{s1Series, s2Series, s3Series};
+
+        for (int i = 0; i < 3; i++) {
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Lap");
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Time (s)");
+            yAxis.setAutoRanging(true);
+
+            LineChart<String, Number> chart = new LineChart<>(xAxis, yAxis);
+            chart.setTitle(titles[i]);
+            chart.setAnimated(false);
+            chart.setCreateSymbols(true);
+            chart.setLegendVisible(false);
+            chart.setPrefHeight(220);
+            chart.setMinWidth(140);
+            HBox.setHgrow(chart, Priority.ALWAYS);
+            xAxis.setTickLabelRotation(-45);
+
+            chart.getData().add(allSeries[i]);
+            box.getChildren().add(chart);
+        }
+        return box;
+    }
+
+    private void updateSectorCharts(String key) {
+        XYChart.Series<String, Number>[] sectors = sectorSeriesMap.get(key);
+        if (sectors == null) return;
+        ObservableList<LapTime> laps = lapDataMap.get(key);
+        if (laps == null || laps.isEmpty()) return;
+
+        LapTime latest = laps.get(laps.size() - 1);
+        int lapNum = laps.size();
+        String label = "L" + lapNum;
+
+        if (latest.getS1Ms() > 0)
+            sectors[0].getData().add(new XYChart.Data<>(label, latest.getS1Ms() / 1000.0));
+        if (latest.getS2Ms() > 0)
+            sectors[1].getData().add(new XYChart.Data<>(label, latest.getS2Ms() / 1000.0));
+        if (latest.getS3Ms() > 0)
+            sectors[2].getData().add(new XYChart.Data<>(label, latest.getS3Ms() / 1000.0));
     }
 
     private boolean isBestSector(ObservableList<LapTime> laps, long sectorMs, int sector) {

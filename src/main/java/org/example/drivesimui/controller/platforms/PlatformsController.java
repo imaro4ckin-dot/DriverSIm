@@ -3,6 +3,7 @@ package org.example.drivesimui.controller.platforms;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
+import org.example.drivesimui.db.DriverStatsRepository;
 import org.example.drivesimui.db.LapRepository;
 import org.example.drivesimui.db.SessionRepository;
 
@@ -20,8 +21,9 @@ public class PlatformsController implements Initializable {
     @FXML private ACCController     accController;
     @FXML private LMUController     lmuController;
 
-    private LapRepository     lapRepo;
-    private SessionRepository sessionRepo;
+    private LapRepository         lapRepo;
+    private SessionRepository     sessionRepo;
+    private DriverStatsRepository statsRepo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -31,8 +33,13 @@ public class PlatformsController implements Initializable {
     public void setRepositories(LapRepository lapRepo, SessionRepository sessionRepo) {
         this.lapRepo     = lapRepo;
         this.sessionRepo = sessionRepo;
-        if (iracingController != null) iracingController.setRepositories(lapRepo, sessionRepo);
-        if (accController     != null) accController.setRepositories(lapRepo, sessionRepo);
-        if (lmuController     != null) lmuController.setRepositories(lapRepo, sessionRepo);
+        this.statsRepo   = new DriverStatsRepository();
+
+        if (iracingController != null)
+            iracingController.setRepositories(lapRepo, sessionRepo, statsRepo);
+        if (accController != null)
+            accController.setRepositories(lapRepo, sessionRepo);
+        if (lmuController != null)
+            lmuController.setRepositories(lapRepo, sessionRepo);
     }
 }
