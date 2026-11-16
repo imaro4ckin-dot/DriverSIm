@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.drivesimui.controller.TelemetryController"
+            styleClass="telemetry-root">
+
+    <!-- ── TOP: import toolbar ────────────────────────────────────── -->
+    <top>
+        <HBox styleClass="telemetry-toolbar" spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="14" bottom="10" left="14"/></padding>
+
+            <Button fx:id="importIbtBtn" text="⬆  IMPORT .ibt"
+                    styleClass="btn-success" onAction="#onImportIbt"/>
+            <Button fx:id="importCsvBtn" text="⬆  IMPORT CSV"
+                    styleClass="btn-success" onAction="#onImportCsv"/>
+
+            <Label text="LAP:" styleClass="telemetry-label"/>
+            <ComboBox fx:id="lapSelector" prefWidth="340" promptText="No file loaded…"
+                      styleClass="combo-box-dark"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="" styleClass="telemetry-status"/>
+        </HBox>
+    </top>
+
+    <!-- ── CENTER: charts (left) + map + video (right) ────────────── -->
+    <center>
+        <HBox spacing="0">
+
+            <!-- ── Left: stacked charts + scrub bar ─────────────────── -->
+            <VBox fx:id="chartsPane" styleClass="telemetry-charts-panel"
+                  HBox.hgrow="ALWAYS" spacing="2">
+
+                <!-- Speed chart (LineChart) -->
+                <LineChart fx:id="speedChart"
+                           styleClass="telemetry-chart"
+                           animated="false" legendVisible="false"
+                           VBox.vgrow="ALWAYS">
+                    <xAxis>
+                        <NumberAxis fx:id="speedXAxis"
+                                    lowerBound="0" upperBound="1" tickUnit="0.1"
+                                    autoRanging="false" tickLabelsVisible="true"
+                                    label="Track position"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="speedYAxis" label="Speed (km/h)"
+                                    autoRanging="true"/>
+                    </yAxis>
+                </LineChart>
+
+                <!-- Throttle chart (AreaChart — supports fill) -->
+                <AreaChart fx:id="throttleChart"
+                           styleClass="telemetry-chart"
+                           animated="false" legendVisible="false"
+                           VBox.vgrow="ALWAYS">
+                    <xAxis>
+                        <NumberAxis fx:id="throttleXAxis"
+                                    lowerBound="0" upperBound="1" tickUnit="0.1"
+                                    autoRanging="false" tickLabelsVisible="false"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="throttleYAxis" label="Throttle %"
+                                    lowerBound="0" upperBound="100"
+                                    tickUnit="25" autoRanging="false"/>
+                    </yAxis>
+                </AreaChart>
+
+                <!-- Brake chart (AreaChart — supports fill) -->
+                <AreaChart fx:id="brakeChart"
+                           styleClass="telemetry-chart"
+                           animated="false" legendVisible="false"
+                           VBox.vgrow="ALWAYS">
+                    <xAxis>
+                        <NumberAxis fx:id="brakeXAxis"
+                                    lowerBound="0" upperBound="1" tickUnit="0.1"
+                                    autoRanging="false" tickLabelsVisible="false"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="brakeYAxis" label="Brake %"
+                                    lowerBound="0" upperBound="100"
+                                    tickUnit="25" autoRanging="false"/>
+                    </yAxis>
+                </AreaChart>
+
+                <!-- Scrub bar -->
+                <HBox styleClass="telemetry-scrub-bar" spacing="10" alignment="CENTER_LEFT">
+                    <padding><Insets top="4" right="12" bottom="4" left="12"/></padding>
+                    <Label text="POSITION" styleClass="telemetry-label"/>
+                    <Slider fx:id="scrubSlider" min="0" max="1" value="0"
+                            HBox.hgrow="ALWAYS" styleClass="telemetry-scrub-slider"/>
+                    <Label fx:id="cursorTimeLabel"  text="0:00.000" styleClass="telemetry-cursor-time"/>
+                    <Label fx:id="cursorSpeedLabel" text="— km/h"   styleClass="telemetry-cursor-speed"/>
+                    <Label fx:id="cursorThrottleLabel" text="T:—"   styleClass="telemetry-cursor-throttle"/>
+                    <Label fx:id="cursorBrakeLabel"    text="B:—"   styleClass="telemetry-cursor-brake"/>
+                </HBox>
+            </VBox>
+
+            <!-- ── Right: track map + video ─────────────────────────── -->
+            <VBox fx:id="rightPanel" styleClass="telemetry-right-panel"
+                  prefWidth="400" minWidth="320" spacing="0">
+
+                <!-- Track map -->
+                <StackPane fx:id="trackMapPane" styleClass="telemetry-map-pane"
+                           VBox.vgrow="ALWAYS" minHeight="220">
+                    <Canvas fx:id="trackCanvas" width="380" height="220"/>
+                    <Label fx:id="noMapLabel"
+                           text="Track map unavailable&#10;(no position data in this file)"
+                           styleClass="telemetry-hint"
+                           StackPane.alignment="CENTER" wrapText="true"/>
+                </StackPane>
+
+                <!-- Video panel -->
+                <VBox styleClass="telemetry-video-panel" spacing="8">
+                    <padding><Insets top="8" right="10" bottom="8" left="10"/></padding>
+
+                    <!-- Video toolbar -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Button fx:id="loadVideoBtn" text="⬆  LOAD VIDEO"
+                                styleClass="btn-toggle" onAction="#onLoadVideo"/>
+                        <Button fx:id="playPauseBtn" text="▶  PLAY"
+                                styleClass="btn-timer-start" onAction="#onPlayPause"
+                                disable="true"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="OFFSET (s)" styleClass="telemetry-label"/>
+                        <TextField fx:id="videoOffsetField" text="0.0"
+                                   prefWidth="60" styleClass="text-field"
+                                   promptText="0.0"/>
+                    </HBox>
+
+                    <!-- Video frame -->
+                    <StackPane styleClass="telemetry-video-frame"
+                               minHeight="180" VBox.vgrow="ALWAYS">
+                        <MediaView fx:id="mediaView"
+                                   fitWidth="380" fitHeight="220"
+                                   preserveRatio="true"/>
+                        <Label fx:id="noVideoLabel" text="No video loaded"
+                               styleClass="telemetry-hint"
+                               StackPane.alignment="CENTER"/>
+                    </StackPane>
+                </VBox>
+
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>

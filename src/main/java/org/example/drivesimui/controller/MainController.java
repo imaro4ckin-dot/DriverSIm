@@ -36,6 +36,7 @@ public class MainController implements Initializable {
     @FXML private LapComparisonController lapComparisonController;
     @FXML private FuelStrategyController  fuelStrategyController;
     @FXML private PlatformsController     platformsController;
+    @FXML private TelemetryController     telemetryController;
 
     private final LapRepository     lapRepo     = new LapRepository();
     private final SessionRepository sessionRepo = new SessionRepository();

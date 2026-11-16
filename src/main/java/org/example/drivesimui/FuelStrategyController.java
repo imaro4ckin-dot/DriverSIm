@@ -168,7 +168,7 @@ public class FuelStrategyController {
         ScrollPane sp = new ScrollPane(root);
         sp.setFitToWidth(true);
         sp.setFitToHeight(true);
-        sp.setStyle("-fx-background-color: #0D1117; -fx-background: #0D1117;");
+        sp.setStyle("-fx-background-color: #080A0F; -fx-background: #080A0F;");
         return sp;
     }
 

@@ -3,6 +3,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.media.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -55,6 +57,9 @@
             </Tab>
             <Tab text="  PLATFORMS  " closable="false">
                 <fx:include fx:id="platforms" source="platforms/platforms.fxml"/>
+            </Tab>
+            <Tab text="  TELEMETRY  " closable="false">
+                <fx:include fx:id="telemetry" source="telemetry.fxml"/>
             </Tab>
         </TabPane>
     </center>

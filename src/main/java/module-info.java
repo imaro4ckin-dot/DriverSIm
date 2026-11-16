@@ -1,6 +1,7 @@
 module org.example.drivesimui {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires java.net.http;
     requires java.xml;
     requires org.apache.pdfbox;

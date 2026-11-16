@@ -30,6 +30,7 @@ public final class TimeFormatter {
         if (raw == null || raw.isBlank()) {
             throw new IllegalArgumentException("Please enter a lap time.");
         }
+        raw = raw.trim();
 
         // Format: m.ss.mmm or m.ss.mm  (two dots)
         if (raw.chars().filter(c -> c == '.').count() == 2) {

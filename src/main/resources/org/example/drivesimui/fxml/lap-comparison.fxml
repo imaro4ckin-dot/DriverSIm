@@ -8,7 +8,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.drivesimui.controller.LapComparisonController"
             fitToWidth="true" fitToHeight="true"
-            style="-fx-background-color: #0D1117; -fx-background: #0D1117;">
+            style="-fx-background-color: #080A0F; -fx-background: #080A0F;">
 
     <VBox fx:id="comparisonRoot" styleClass="comparison-root" spacing="14">
         <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
